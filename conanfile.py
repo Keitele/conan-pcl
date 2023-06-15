@@ -39,7 +39,6 @@ class PclConan(ConanFile):
                             "eigen/*:shared": True,
                             "vtk/*:shared": True,
                         }
-    exports_sources = "patches/*.patch"
 
     def source(self):
         get(self, **self.conan_data["sources"][self.version])
@@ -65,6 +64,8 @@ class PclConan(ConanFile):
         tc.variables['ADDITIONAL_DEFINITIONS:STRING'] ='-DBOOST_UUID_RANDOM_GENERATOR_COMPAT'
         tc.variables['BUILD_surface_on_nurbs:BOOL'] = True
 
+        vtk = self.dependencies["vtk"]
+        # tc.variables['VTK_DIR:PATH']    = vtk.cpp_info
         tc.generate()
 
         deps = CMakeDeps(self)
@@ -87,4 +88,6 @@ class PclConan(ConanFile):
         self.cpp_info.set_property("cmake_module_file_name", "Pcl")
         self.cpp_info.set_property("cmake_file_name", "pcl")
         self.cpp_info.set_property("pkg_config_name", "pcl")
+
         self.cpp_info.libs = collect_libs(self)
+        self.cpp_info.includedirs = ["include", "include/pcl-1.13"]
