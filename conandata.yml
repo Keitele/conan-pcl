@@ -1,0 +1,9 @@
+sources:
+  "1.13.1":
+    url: "https://github.com/PointCloudLibrary/pcl/releases/download/pcl-1.13.1/source.zip"
+    strip_root: true
+
+patches:
+  "1.13.1":
+    - patch_file: "patches/FindFlann.patch"
+      patch_type: conan

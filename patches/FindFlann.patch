@@ -1,0 +1,26 @@
+diff --git a/kdtree/CMakeLists.txt b/kdtree/CMakeLists.txt
+index d9c94bbe4..f96abcb67 100644
+--- a/kdtree/CMakeLists.txt
++++ b/kdtree/CMakeLists.txt
+@@ -30,7 +30,7 @@ set(impl_incs
+ set(LIB_NAME "pcl_${SUBSYS_NAME}")
+ include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include")
+ PCL_ADD_LIBRARY(${LIB_NAME} COMPONENT ${SUBSYS_NAME} SOURCES ${srcs} ${incs} ${impl_incs})
+-target_link_libraries("${LIB_NAME}" pcl_common FLANN::FLANN)
++target_link_libraries("${LIB_NAME}" pcl_common flann::flann)
+ set(EXT_DEPS flann)
+ PCL_MAKE_PKGCONFIG(${LIB_NAME} COMPONENT ${SUBSYS_NAME} DESC ${SUBSYS_DESC} PCL_DEPS ${SUBSYS_DEPS} EXT_DEPS ${EXT_DEPS})
+ 
+diff --git a/search/CMakeLists.txt b/search/CMakeLists.txt
+index 0b93e5255..53b823809 100644
+--- a/search/CMakeLists.txt
++++ b/search/CMakeLists.txt
+@@ -41,7 +41,7 @@ set(impl_incs
+ set(LIB_NAME "pcl_${SUBSYS_NAME}")
+ include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include")
+ PCL_ADD_LIBRARY(${LIB_NAME} COMPONENT ${SUBSYS_NAME} SOURCES ${srcs} ${incs} ${impl_incs})
+-target_link_libraries("${LIB_NAME}" pcl_common FLANN::FLANN pcl_octree pcl_kdtree)
++target_link_libraries("${LIB_NAME}" pcl_common flann::flann pcl_octree pcl_kdtree)
+ list(APPEND EXT_DEPS flann)
+ PCL_MAKE_PKGCONFIG(${LIB_NAME} COMPONENT ${SUBSYS_NAME} DESC ${SUBSYS_DESC} PCL_DEPS ${SUBSYS_DEPS})
+ 
