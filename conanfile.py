@@ -6,6 +6,7 @@ from conan import ConanFile, Version
 from conan.tools.cmake import CMake, CMakeDeps, CMakeToolchain, cmake_layout
 from conan.tools.files import collect_libs
 from conan.tools.files import apply_conandata_patches, export_conandata_patches, get, rmdir
+from conan.tools.gnu import PkgConfig
 
 class PclConan(ConanFile):
     name         = 'pcl'
@@ -21,6 +22,8 @@ class PclConan(ConanFile):
                         'flann/[>=1.6.8]',
                         'boost/[>=1.66]',
                         'qhull/8.0.1',
+                        'opengl/system',
+                        'glew/2.2.0',
                         'vtk/[>=5.6.1]@gtel/stable',
                         'zlib/[>=1.2.11]@conan/stable',
                     )
@@ -36,6 +39,8 @@ class PclConan(ConanFile):
                             "fPIC": True, 
                             "with_qt": False, 
                             "boost/*:shared": True,
+                            "opengl/*:shared": True,
+                            "glew/*:shared": True,
                             "eigen/*:shared": True,
                             "vtk/*:shared": True,
                         }
@@ -64,7 +69,7 @@ class PclConan(ConanFile):
         tc.variables['ADDITIONAL_DEFINITIONS:STRING'] ='-DBOOST_UUID_RANDOM_GENERATOR_COMPAT'
         tc.variables['BUILD_surface_on_nurbs:BOOL'] = True
 
-        vtk = self.dependencies["vtk"]
+        # vtk = self.dependencies["vtk"]
         # tc.variables['VTK_DIR:PATH']    = vtk.cpp_info
         tc.generate()
 
@@ -80,14 +85,28 @@ class PclConan(ConanFile):
         cmake = CMake(self)
         cmake.install()
 
-        rmdir(self, os.path.join(self.package_folder, "lib", "pkgconfig"))
-        rmdir(self, os.path.join(self.package_folder, "lib", "cmake"))
+        # rmdir(self, os.path.join(self.package_folder, "lib", "pkgconfig"))
+        # rmdir(self, os.path.join(self.package_folder, "lib", "cmake"))
+
+    # def package_info(self):
+    #     self.cpp_info.set_property("cmake_find_mode", "both")
+    #     self.cpp_info.set_property("cmake_module_file_name", "Pcl")
+    #     self.cpp_info.set_property("cmake_file_name", "pcl")
+    #     self.cpp_info.set_property("pkg_config_name", "pcl")
+
+    #     self.cpp_info.libs = collect_libs(self)
+    #     self.cpp_info.includedirs = ["include", "include/pcl-1.13"]
 
     def package_info(self):
-        self.cpp_info.set_property("cmake_find_mode", "both")
-        self.cpp_info.set_property("cmake_module_file_name", "Pcl")
-        self.cpp_info.set_property("cmake_file_name", "pcl")
-        self.cpp_info.set_property("pkg_config_name", "pcl")
+        components = [
+                    "pcl_2d", "pcl_common", "pcl_features", "pcl_filters", "pcl_geometry", "pcl_io", 
+                    "pcl_kdtree", "pcl_keypoints", "pcl_ml", "pcl_octree", "pcl_outofcore", 
+                    "pcl_people", "pcl_recognition", "pcl_registration", "pcl_sample_consensus", "pcl_search", "pcl_segmentation", 
+                    "pcl_stereo", "pcl_surface", "pcl_tracking", "pcl_visualization", "pcl_search", "pcl_segmentation", 
+                    "pcl_people", "pcl_recognition", "pcl_registration", "pcl_sample_consensus", "pcl_search", "pcl_segmentation", 
+                ]
 
-        self.cpp_info.libs = collect_libs(self)
-        self.cpp_info.includedirs = ["include", "include/pcl-1.13"]
+        for component in components:
+            self.cpp_info.components[component].set_property("cmake_target_name", component)
+            pkg_config = PkgConfig(self, component, pkg_config_path=os.path.join(self.package_folder, "lib", "pkgconfig"))
+            pkg_config.fill_cpp_info(self.cpp_info.components[component], is_system=False, system_libs=['lz4', 'flann', 'flann_cpp'])
