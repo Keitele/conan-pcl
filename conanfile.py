@@ -24,8 +24,7 @@ class PclConan(ConanFile):
                         'qhull/8.0.1',
                         'opengl/system',
                         'glew/2.2.0',
-                        'vtk/[>=5.6.1]@gtel/stable',
-                        'zlib/[>=1.2.11]@conan/stable',
+                        'vtk/[>=5.6.1]',
                     )
 
     options      = {
